@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +12,7 @@ public class QuadTree {
     public static int MaxLeaves = 6;
     public static int MaxDepth  = 12;
 
-    private ArrayList<cell> leaves;
+    private ArrayList<Cell> leaves;
     private QuadTree[] branches;
     private int level;
     private DoubleRectangle bounds;
@@ -22,7 +21,7 @@ public class QuadTree {
 
         this.level    = level;
         this.bounds   = bounds;
-        this.leaves   = new ArrayList<cell>();
+        this.leaves   = new ArrayList<Cell>();
         this.branches = new QuadTree[4];
     }
 
@@ -74,7 +73,7 @@ public class QuadTree {
         return index;
     }
 
-    public void insert(cell c){
+    public void insert(Cell c){
         if(branches[0]!=null){
             int index = GetIndex(c.box);
             if(index!=-1){
@@ -93,7 +92,7 @@ public class QuadTree {
             while(i<leaves.size()){
                 int index = GetIndex(leaves.get(i).box);
                 if(index!=-1){
-                    cell shift = leaves.get(i);
+                    Cell shift = leaves.get(i);
                     leaves.remove(i);
                     branches[index].insert(shift);
                 }
@@ -104,7 +103,7 @@ public class QuadTree {
             }
         }
     }
-    public ArrayList<cell> retrieve(ArrayList<cell> returned, cell c){
+    public ArrayList<Cell> retrieve(ArrayList<Cell> returned, Cell c){
         int index = GetIndex(c.box);
         if((index!=-1) && (branches[0] != null)){
             branches[index].retrieve(returned, c);

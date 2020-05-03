@@ -12,23 +12,19 @@ public class SimGUIPanel {
     //Switches in the GUI
     boolean proliferate = false;
     boolean die         = false;
-    boolean contact     = MelaMigration.ctc;
-    boolean absorber    = MelaMigration.abs;
-    boolean vis         = MelaMigration.visualise;
-    boolean pinned      = MelaMigration.pinned;
+    boolean absorber    = AgentBasedSimulation.abs;
+    boolean vis         = AgentBasedSimulation.visualise;
 
-    double  alpha       = MelaMigration.alpha;
-    double  min         = MelaMigration.min;
-    double  max         = MelaMigration.max;
-    double  dt          = MelaMigration.dt;
+    double  alpha       = AgentBasedSimulation.alpha;
+    double  dt          = AgentBasedSimulation.dt;
     double  dx          = ChemicalEnvironment.grain;
-    double  Diff        = MigrationSimulation.DiffC;
-    double  speed       = cell.speed;
-    double  sMax        = MigrationSimulation.sMax;
-    double  kD          = MigrationSimulation.kD;
-    double  kM          = MigrationSimulation.kM;
-    double  xMax        = MelaMigration.dimensions[0];
-    double  yMax        = MelaMigration.dimensions[1];
+    double  Diff        = ChemicalEnvironment.DiffC;
+    double  speed       = Cell.speed;
+    double  sMax        = ChemicalEnvironment.sMax;
+    double  kD          = Cell.kD;
+    double  kM          = ChemicalEnvironment.kM;
+    double  xMax        = AgentBasedSimulation.dimensions[0];
+    double  yMax        = AgentBasedSimulation.dimensions[1];
 
     private JPanel p;
 
@@ -47,7 +43,7 @@ public class SimGUIPanel {
         jtv.setToolTipText("have cells reproduce.");
         p.add(jtp);
 
-        JCheckBox jtc = new JCheckBox("Contact", contact);
+        JCheckBox jtc = new JCheckBox("Contact", false);
         jtv.setToolTipText("Have cells experience contact inhibition.");
         p.add(jtc);
 
@@ -55,15 +51,32 @@ public class SimGUIPanel {
         jtv.setToolTipText("Have cells degrade chemoattractant.");
         p.add(jta);
 
-        p.add(new JLabel("Min. conc.", JLabel.TRAILING));
-        JTextField jtMin = new JTextField(Double.toString(min));
-        jtMin.setToolTipText("The concentration on the left-hand side. \n Does not actually have to be the minimum concentration value.");
-        p.add(jtMin);
+        p.add(new JLabel("Concentration", JLabel.TRAILING));
+        JTextField jtConc = new JTextField(Double.toString(ChemicalEnvironment.baseConcentration));
+        jtConc.setToolTipText("The initial attractant concentration within the maze.");
+        p.add(jtConc);
 
-        p.add(new JLabel("Max. conc.", JLabel.TRAILING));
-        JTextField jtMax = new JTextField(Double.toString(max));
-        jtMax.setToolTipText("The concentration on the right-hand side. \nDoes not actually have to be the maximum concentration value.");
-        p.add(jtMax);
+        /*
+        p.add(new JLabel("L.", JLabel.TRAILING));
+        JTextField jtL = new JTextField(Double.toString(ChemicalEnvironment.L));
+        jtL.setToolTipText("The arc length control of the maze");
+        p.add(jtL);
+
+        p.add(new JLabel("W.", JLabel.TRAILING));
+        JTextField jtW = new JTextField(Double.toString(ChemicalEnvironment.W));
+        jtW.setToolTipText("The arc length control of the maze");
+        p.add(jtW);
+
+        p.add(new JLabel("k.", JLabel.TRAILING));
+        JTextField jtComplex = new JTextField(Double.toString(ChemicalEnvironment.k));
+        jtComplex.setToolTipText("The branching complexity of the maze.");
+        p.add(jtComplex);
+
+        p.add(new JLabel("skew.", JLabel.TRAILING));
+        JTextField jtSkew = new JTextField(Double.toString(ChemicalEnvironment.skew));
+        jtSkew.setToolTipText("The degree to which the real branch is also the longest (from -1 to 1). ");
+        p.add(jtSkew);
+        */
 
         p.add(new JLabel("dt", JLabel.TRAILING));
         JTextField jtdt = new JTextField(Double.toString(dt));
@@ -74,16 +87,6 @@ public class SimGUIPanel {
         JTextField jtdx = new JTextField(Double.toString(dx));
         jtdx.setToolTipText("The grid spacing (for diffusion).");
         p.add(jtdx);
-
-        p.add(new JLabel("x size", JLabel.TRAILING));
-        JTextField jtx = new JTextField(Double.toString(xMax));
-        jtx.setToolTipText("The horizontal size of the simulation.");
-        p.add(jtx);
-
-        p.add(new JLabel("y size", JLabel.TRAILING));
-        JTextField jty = new JTextField(Double.toString(yMax));
-        jty.setToolTipText("The vertical size of the simulation.");
-        p.add(jty);
 
         p.add(new JLabel("D", JLabel.TRAILING));
         JTextField jtDiff = new JTextField(Double.toString(Diff));
@@ -115,21 +118,30 @@ public class SimGUIPanel {
         jtPol.setToolTipText("The expected agreement in the direction a cell moves after 1 minute.");
         p.add(jtPol);
 
-        p.add(new JLabel("directory", JLabel.TRAILING));
-        JTextField jtdir = new JTextField(MelaMigration.directory,10);
-        jtdir.setToolTipText("The output directory.");
-        p.add(jtdir);
-
         p.add(new JLabel(""));
 
-        JCheckBox jPin = new JCheckBox("Pinned", pinned);
+        JCheckBox jPin = new JCheckBox("Pinned", false);
         jtv.setToolTipText("Boundary conditions pinned to max/min inputs");
         p.add(jPin);
 
 
+        p.add(new JLabel("directory", JLabel.TRAILING));
+        JTextField jtdir = new JTextField(AgentBasedSimulation.directory,10);
+        jtdir.setToolTipText("The output directory.");
+        p.add(jtdir);
+
+
+        p.add(new JLabel("Input Picture", JLabel.TRAILING));
+        JTextField jtIn = new JTextField(AgentBasedSimulation.directory,10);
+        jtIn.setToolTipText("The input picture. If blank, a maze will be generated.");
+        p.add(jtIn);
+
+
+
+
 
         SpringUtilities.makeCompactGrid(p,
-                8, 4,        //rows, cols
+                7, 4,        //rows, cols
                 6, 6,        //initX, initY
                 6, 6);       //xPad, yPad
         int iR = JOptionPane.showConfirmDialog(p,p, "Simulation 1", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -137,12 +149,16 @@ public class SimGUIPanel {
 
             proliferate = jtp.isSelected();
             vis         = jtv.isSelected();
-            contact     = jtc.isSelected();
             absorber    = jta.isSelected();
-            pinned      = jPin.isSelected();
 
-            min   = Double.parseDouble(jtMin.getText());
-            max   = Double.parseDouble(jtMax.getText());
+            ChemicalEnvironment.baseConcentration  = Double.parseDouble(jtConc.getText());
+            /*ChemicalEnvironment.L  = Double.parseDouble(jtL.getText());
+            ChemicalEnvironment.W  = Double.parseDouble(jtW.getText());
+
+            ChemicalEnvironment.k     = (int)Double.parseDouble(jtComplex.getText());
+            ChemicalEnvironment.skew  = Double.parseDouble(jtSkew.getText()); */
+
+
             alpha = Double.parseDouble(jtPol.getText());
             speed = Double.parseDouble(jtSp.getText());
             Diff  = Double.parseDouble(jtDiff.getText());
@@ -152,14 +168,12 @@ public class SimGUIPanel {
             dt    = Double.parseDouble(jtdt.getText());
             dx    = Double.parseDouble(jtdx.getText());
 
-            xMax  = Double.parseDouble(jtx.getText());
-            yMax  = Double.parseDouble(jty.getText());
 
-            MelaMigration.directory = jtdir.getText();
-            MelaMigration.pinned = pinned;
 
-            MelaMigration.dimensions[0] = MelaMigration.dimensions[2] = xMax;
-            MelaMigration.dimensions[1] = MelaMigration.dimensions[3] = yMax;
+            AgentBasedSimulation.directory = jtdir.getText();
+
+            AgentBasedSimulation.dimensions[0] = AgentBasedSimulation.dimensions[2] = xMax;
+            AgentBasedSimulation.dimensions[1] = AgentBasedSimulation.dimensions[3] = yMax;
         }
         else{
             System.exit(0);
@@ -169,6 +183,6 @@ public class SimGUIPanel {
 
     public MigrationSimulation SetupSimulation(String name){
 
-         return new MigrationSimulation(proliferate, die, contact, absorber, min, max, alpha,speed,dt,dx,Diff,kD,kM,sMax);
+         return new MigrationSimulation(absorber, alpha,speed,dt,dx,Diff,kD,kM,sMax);
     }
 }
